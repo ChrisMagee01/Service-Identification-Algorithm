@@ -43,4 +43,27 @@ public class Service {
         }
         return name;
     }
+
+    public boolean isEqual(Service a) {
+        boolean dupe = true;
+        for (Class classA : a.containedClasses) {
+            if (!containedClasses.contains(classA)) {
+                dupe = false;
+            }
+            if (!dupe) {
+                break;
+            }
+        }
+        if (dupe) {
+            for (Class ownClass : containedClasses) {
+                if (!a.containedClasses.contains(ownClass)) {
+                    dupe = false;
+                }
+                if (!dupe) {
+                    break;
+                }
+            }
+        }
+        return dupe;
+    }
 }
