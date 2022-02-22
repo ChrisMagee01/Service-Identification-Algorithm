@@ -13,6 +13,9 @@ public class Main {
 
         singletons = step2(singletons);
         System.out.println(singletons.size());
+        for (Service service : singletons) {
+            System.out.println(service);
+        }
     }
 
     public static ArrayList<Service> step2(ArrayList<Service> originalServices) {
@@ -81,10 +84,9 @@ public class Main {
         }
         newServices = step3(newServices);
         for (int i = 0; i < newServices.size(); i++) {
-            System.out.println(newServices.get(i));
             originalServices.add(newServices.get(i));
         }
-        return originalServices;
+        return step4(originalServices);
     }
 
     public static ArrayList<Service> step3(ArrayList<Service> originalServices) {
@@ -94,7 +96,7 @@ public class Main {
                 cohesiveServices.add(service);
         }
 
-        return step4(cohesiveServices);
+        return cohesiveServices;
     }
 
     public static ArrayList<Service> step4(ArrayList<Service> originalServices) {
@@ -105,11 +107,13 @@ public class Main {
                 cohesion = service.getCohesion();
                 maxCohesion.removeAll(maxCohesion);
                 maxCohesion.add(service);
-            } else if(service.getCohesion() == cohesion){
+            } else if (service.getCohesion() == cohesion) {
                 maxCohesion.add(service);
             }
         }
+        originalServices = step56(originalServices.get(8), originalServices);
 
+/*
         //at this point max cohesion contains all the most cohesive services.
         double maxReturnedCohesion = 0;
         ArrayList<ArrayList> mostCohesive = new ArrayList<>();
@@ -128,13 +132,38 @@ public class Main {
             } else if(returnedCohesion==maxReturnedCohesion){
                 mostCohesive.add(returned);
             }
-        }
+        }*/
         return originalServices;
     }
 
-    private static ArrayList<Service> step56(Service service, ArrayList<Service> originalServices) {
+    private static ArrayList<Service> step56(Service selected, ArrayList<Service> originalServices) {
+        System.out.println(selected);
+        System.out.println(originalServices);
+        ArrayList<Service> newServices = new ArrayList<>();
+        for (Service original : originalServices) {
+            Service temp = new Service();
+            for (Class currentClass : original.containedClasses) {
+                if (!selected.containedClasses.contains(currentClass)) {
+                    temp.addClass(currentClass);
+                }
+            }
+            boolean duplicate =false;
+            for (Service newService: newServices) {
+                duplicate = newService.isEqual(temp);
+                if(duplicate) {
+                    break;
+                }
+            }
+            if (!temp.containedClasses.isEmpty() && !duplicate) {
+                newServices.add(temp);
+            }
+        }
 
-        return originalServices;
+        newServices.add(selected);
+
+
+
+        return newServices;
     }
 
 
