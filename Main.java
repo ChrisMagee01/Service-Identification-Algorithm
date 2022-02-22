@@ -17,14 +17,14 @@ public class Main {
 
     public static ArrayList<Service> step2(ArrayList<Service> originalServices) {
 
-        ArrayList<Service> newServices = new ArrayList<Service>();
+        ArrayList<Service> newServices = new ArrayList<>();
 
         for (int i = 0; i < originalServices.size(); i++) {
             for (int j = i + 1; j < originalServices.size(); j++) {
                 Service temp = new Service();
 
                 ArrayList<Class> classesInServiceA = originalServices.get(j).containedClasses;
-                //Add classes to the new service. First check that the class is not already in the service
+                //Add classes to the new service. First check the class is not already in the service
                 for (int k = 0; k < classesInServiceA.size(); k++) {
                     if (!temp.containedClasses.contains(classesInServiceA.get(k))) {
                         temp.addClass(classesInServiceA.get(k));
@@ -41,7 +41,7 @@ public class Main {
 
 
                 //add temp service to service arraylist
-                //but first check for duplicate agaionst other new services
+                //but first check for duplicate against other new services
                 boolean duplicate = true;
                 for (int k = 0; k < newServices.size(); k++) {
                     for (int l = 0; l < newServices.get(k).containedClasses.size(); l++) {
@@ -59,7 +59,7 @@ public class Main {
                 if (duplicate) {
 
                     //add temp service to service arraylist
-                    //but first check for duplicate agaionst other original services
+                    //but first check for duplicate against other original services
                     for (int k = 0; k < originalServices.size(); k++) {
                         for (int l = 0; l < originalServices.get(k).containedClasses.size(); l++) {
 
@@ -94,19 +94,49 @@ public class Main {
                 cohesiveServices.add(service);
         }
 
-        return step456(cohesiveServices);
+        return step4(cohesiveServices);
     }
 
-    public static ArrayList<Service> step456(ArrayList<Service> originalServices) {
+    public static ArrayList<Service> step4(ArrayList<Service> originalServices) {
         ArrayList<Service> maxCohesion = new ArrayList<>();
         double cohesion = 0;
         for (Service service : originalServices) {
             if (service.getCohesion() > cohesion) {
                 cohesion = service.getCohesion();
+                maxCohesion.removeAll(maxCohesion);
+                maxCohesion.add(service);
+            } else if(service.getCohesion() == cohesion){
+                maxCohesion.add(service);
             }
-
         }
+
+        //at this point max cohesion contains all the most cohesive services.
+        double maxReturnedCohesion = 0;
+        ArrayList<ArrayList> mostCohesive = new ArrayList<>();
+        for (Service service: maxCohesion) {
+            ArrayList<Service> returned = step56(service, originalServices);
+            //
+            double returnedCohesion = 0;
+            for (Service returnedService : returned) {
+                returnedCohesion += returnedService.getCohesion();
+            }
+            returnedCohesion = returnedCohesion / returned.size();
+            if (returnedCohesion > maxReturnedCohesion) {
+                maxReturnedCohesion = returnedCohesion;
+                mostCohesive.removeAll(mostCohesive);
+                mostCohesive.add(returned);
+            } else if(returnedCohesion==maxReturnedCohesion){
+                mostCohesive.add(returned);
+            }
+        }
+        return originalServices;
     }
+
+    private static ArrayList<Service> step56(Service service, ArrayList<Service> originalServices) {
+
+        return originalServices;
+    }
+
 
     public static int classCount(ArrayList<Service> services, Class a) {
         int appearances = 0;
