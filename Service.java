@@ -12,7 +12,9 @@ public class Service {
     }
 
     public double getCohesion(){
-        return getInternalLinks()/maxLinks;
+        if (maxLinks == 0)
+            return 0;
+        return getInternalLinks() / maxLinks;
     }
 
     public boolean isCohesive(){
@@ -37,7 +39,7 @@ public class Service {
     public String toString() {
         String name = "Service:";
         for (int i = 0; i < containedClasses.size(); i++) {
-            name += containedClasses.get(i).toString() + " ";
+            name += "[" + containedClasses.get(i).toString() + "] ";
         }
         return name;
     }
