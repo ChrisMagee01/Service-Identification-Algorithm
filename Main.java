@@ -11,11 +11,28 @@ public class Main {
             singletons.add(temp);
         }
 
-        singletons = step2(singletons);
-        System.out.println(singletons.size());
-        for (Service service : singletons) {
+
+        ArrayList<Service> returned = step2(singletons);
+        ArrayList<Service> finished = new ArrayList<>();
+        if(averageCohesion(returned)>averageCohesion(singletons)){
+            finished=returned;
+        }else{
+            finished=singletons;
+        }
+
+
+        System.out.println(finished.size());
+        for (Service service : finished) {
             System.out.println(service);
         }
+    }
+
+    public static double averageCohesion(ArrayList<Service> services) {
+        double total= 0;
+        for (Service service:services) {
+            total+=service.getCohesion();
+        }
+        return (total/ services.size());
     }
 
     public static ArrayList<Service> step2(ArrayList<Service> originalServices) {
