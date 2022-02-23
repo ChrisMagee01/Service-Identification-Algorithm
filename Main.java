@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.*;
 
 public class Main {
     public static void main(String[] args) {
@@ -128,8 +129,12 @@ public class Main {
                 maxCohesion.add(service);
             }
         }
-        originalServices = step56(originalServices.get(8), originalServices);
+        Scanner kb = new Scanner(System.in);
 
+        System.out.println(maxCohesion);
+        System.out.println("Select a service");
+        int sel = kb.nextInt();
+        originalServices = step56(maxCohesion.get(sel), originalServices);
 /*
         //at this point max cohesion contains all the most cohesive services.
         double maxReturnedCohesion = 0;
