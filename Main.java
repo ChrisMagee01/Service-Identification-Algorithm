@@ -163,9 +163,22 @@ public class Main {
 
 
 
-        return newServices;
+        return step7(newServices);
     }
 
+    private static ArrayList<Service> step7(ArrayList<Service> originalServices){
+        ArrayList<Service> newServices = new ArrayList<>();
+        for (Service originalService: originalServices) {
+            boolean isUnique = false;
+            for (Class classInService: originalService.containedClasses) {
+                isUnique = classCount(originalServices, classInService)==1;
+            }
+            if(originalService.isCohesive() || isUnique){
+                newServices.add(originalService);
+            }
+        }
+        return newServices;
+    }
 
     public static int classCount(ArrayList<Service> services, Class a) {
         int appearances = 0;
