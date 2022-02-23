@@ -37,9 +37,9 @@ public class Service {
 
     @Override
     public String toString() {
-        String name = "Service:";
+        String name = "Cohesion: "+getCohesion()+"\tClasses: ";
         for (int i = 0; i < containedClasses.size(); i++) {
-            name += "[" + containedClasses.get(i).toString() + "] ";
+            name +="[" + containedClasses.get(i).toString() + "] ";
         }
         return name;
     }
