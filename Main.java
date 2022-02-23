@@ -131,9 +131,12 @@ public class Main {
         }
         Scanner kb = new Scanner(System.in);
 
-        System.out.println(maxCohesion);
+        System.out.println("Services: " + maxCohesion.size());
         System.out.println("Select a service");
+        System.out.println(maxCohesion);
         int sel = kb.nextInt();
+        if(sel==-1)
+            return(originalServices);
         originalServices = step56(maxCohesion.get(sel), originalServices);
 /*
         //at this point max cohesion contains all the most cohesive services.
@@ -159,8 +162,6 @@ public class Main {
     }
 
     private static ArrayList<Service> step56(Service selected, ArrayList<Service> originalServices) {
-        System.out.println(selected);
-        System.out.println(originalServices);
         ArrayList<Service> newServices = new ArrayList<>();
         for (Service original : originalServices) {
             Service temp = new Service();
