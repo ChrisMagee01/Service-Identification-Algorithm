@@ -12,9 +12,14 @@ public class Main {
             singletons.add(temp);
         }
 
-
+        System.out.println(singletons.size());
         ArrayList<Service> returned = step2(singletons);
+
+        System.out.println("Singleton size after step2:\t"+singletons.size());
+        System.out.println("returned size after step2:\t"+returned.size());
         ArrayList<Service> finished = new ArrayList<>();
+        System.out.println(averageCohesion(returned));
+        System.out.println(singletons);
         if(averageCohesion(returned)>averageCohesion(singletons)){
             finished=returned;
         }else{
@@ -22,7 +27,6 @@ public class Main {
         }
 
 
-        System.out.println(finished.size());
         for (Service service : finished) {
             System.out.println(service);
         }
@@ -33,7 +37,21 @@ public class Main {
         for (Service service:services) {
             total+=service.getCohesion();
         }
+        if(services.size()==0)
+            return 0;
         return (total/ services.size());
+    }
+
+    public static boolean isServiceExisting(ArrayList<Service> services, Service serviceToTest) {
+        boolean isNotDuplicate = true;
+
+        for (Service source : services) {
+            if (source.isEqual(serviceToTest)) {
+                isNotDuplicate = false;
+                break;
+            }
+        }
+        return !isNotDuplicate;
     }
 
     public static ArrayList<Service> step2(ArrayList<Service> originalServices) {
@@ -63,48 +81,22 @@ public class Main {
 
                 //add temp service to service arraylist
                 //but first check for duplicate against other new services
-                boolean duplicate = true;
-                for (int k = 0; k < newServices.size(); k++) {
-                    for (int l = 0; l < newServices.get(k).containedClasses.size(); l++) {
-
-                        if (!temp.containedClasses.contains(newServices.get(k).containedClasses.get(l))) {
-                            duplicate = false;
-                            break;
-                        }
-
-                    }
-                    if (!duplicate) {
-                        break;
-                    }
-                }
-                if (duplicate) {
-
-                    //add temp service to service arraylist
-                    //but first check for duplicate against other original services
-                    for (int k = 0; k < originalServices.size(); k++) {
-                        for (int l = 0; l < originalServices.get(k).containedClasses.size(); l++) {
-
-                            if (!temp.containedClasses.contains(originalServices.get(k).containedClasses.get(l))) {
-                                duplicate = false;
-                                break;
-                            }
-
-                        }
-                        if (!duplicate) {
-                            break;
-                        }
-                    }
-
-                }
-
-                newServices.add(temp);
+                 if (!isServiceExisting(originalServices,temp) || !isServiceExisting(newServices,temp))
+                     newServices.add(temp);
             }
         }
         newServices = step3(newServices);
-        for (int i = 0; i < newServices.size(); i++) {
-            originalServices.add(newServices.get(i));
+        ArrayList<Service> totalServices = new ArrayList<>();
+
+        for (Service newS: newServices) {
+            totalServices.add(newS);
         }
-        return step4(originalServices);
+
+        for (Service original: originalServices){
+        totalServices.add(original) ;
+
+        }
+        return step4(totalServices, newServices);
     }
 
     public static ArrayList<Service> step3(ArrayList<Service> originalServices) {
@@ -117,10 +109,10 @@ public class Main {
         return cohesiveServices;
     }
 
-    public static ArrayList<Service> step4(ArrayList<Service> originalServices) {
+    public static ArrayList<Service> step4(ArrayList<Service> allServices, ArrayList<Service> step2CreatedServices) {
         ArrayList<Service> maxCohesion = new ArrayList<>();
         double cohesion = 0;
-        for (Service service : originalServices) {
+        for (Service service : step2CreatedServices) {
             if (service.getCohesion() > cohesion) {
                 cohesion = service.getCohesion();
                 maxCohesion.removeAll(maxCohesion);
@@ -129,21 +121,26 @@ public class Main {
                 maxCohesion.add(service);
             }
         }
+        if(maxCohesion.isEmpty()) {
+            System.out.println(maxCohesion.size());
+            return (allServices);
+        }
         Scanner kb = new Scanner(System.in);
 
         System.out.println("Services: " + maxCohesion.size());
         System.out.println("Select a service");
         System.out.println(maxCohesion);
         int sel = kb.nextInt();
-        if(sel==-1)
-            return(originalServices);
-        originalServices = step56(maxCohesion.get(sel), originalServices);
+        if(sel==-1){
+            System.out.println(sel);
+            return(allServices);}
+        allServices = step56(maxCohesion.get(sel), allServices);
 /*
         //at this point max cohesion contains all the most cohesive services.
         double maxReturnedCohesion = 0;
         ArrayList<ArrayList> mostCohesive = new ArrayList<>();
         for (Service service: maxCohesion) {
-            ArrayList<Service> returned = step56(service, originalServices);
+            ArrayList<Service> returned = step56(service, allServices);
             //
             double returnedCohesion = 0;
             for (Service returnedService : returned) {
@@ -158,7 +155,7 @@ public class Main {
                 mostCohesive.add(returned);
             }
         }*/
-        return originalServices;
+        return allServices;
     }
 
     private static ArrayList<Service> step56(Service selected, ArrayList<Service> originalServices) {
@@ -170,22 +167,11 @@ public class Main {
                     temp.addClass(currentClass);
                 }
             }
-            boolean duplicate =false;
-            for (Service newService: newServices) {
-                duplicate = newService.isEqual(temp);
-                if(duplicate) {
-                    break;
-                }
-            }
-            if (!temp.containedClasses.isEmpty() && !duplicate) {
+            if (!temp.containedClasses.isEmpty() && !isServiceExisting(newServices,temp)) {
                 newServices.add(temp);
             }
         }
-
         newServices.add(selected);
-
-
-
         return step7(newServices);
     }
 
@@ -195,6 +181,8 @@ public class Main {
             boolean isUnique = false;
             for (Class classInService: originalService.containedClasses) {
                 isUnique = classCount(originalServices, classInService)==1;
+                if(isUnique)
+                    break;
             }
             if(originalService.isCohesive() || isUnique){
                 newServices.add(originalService);
