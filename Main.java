@@ -177,7 +177,15 @@ public class Main {
                 newServices.add(originalService);
             }
         }
-        return newServices;
+        return step8(newServices);
+    }
+
+    private static ArrayList<Service> step8(ArrayList<Service> newServices) {
+        if(newServices.size()<=1){
+            return newServices;
+        } else{
+            return step2(newServices);
+        }
     }
 
     public static int classCount(ArrayList<Service> services, Class a) {
